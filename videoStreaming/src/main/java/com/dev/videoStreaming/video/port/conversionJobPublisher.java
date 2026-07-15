@@ -1,5 +1,7 @@
 package com.dev.videoStreaming.video.port;
 
-public class conversionJobPublisher {
-    
+import com.dev.videoStreaming.video.domain.videoReadyEvent;
+
+public interface conversionJobPublisher {
+    public void publish(videoReadyEvent event);
 }
