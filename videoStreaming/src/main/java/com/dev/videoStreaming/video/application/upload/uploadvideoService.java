@@ -12,13 +12,13 @@ import com.dev.videoStreaming.video.domain.videoStatus;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 
 @Slf4j
 @Service
 public class uploadvideoService {
 
-    public uploadvideoService(MinioClient minioClient, RabbitTemplate rabbitTemplate, videoRepository videoRepository) {
+    public uploadvideoService(MinioClient minioClient, RabbitTemplate rabbitTemplate, VideoRepository videoRepository) {
         this.minioClient = minioClient;
         this.rabbitTemplate = rabbitTemplate;
         this.videoRepository = videoRepository;
@@ -26,7 +26,7 @@ public class uploadvideoService {
 
     private final MinioClient minioClient;
     private final RabbitTemplate rabbitTemplate;
-    private final videoRepository videoRepository;
+    private final VideoRepository videoRepository;
     private final String bucketName = "videos";
     private final String exchangeName = "video-exchange";
     private final String routingKey = "video-upload";
