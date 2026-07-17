@@ -24,9 +24,8 @@ public class videoMetadata {
     private String title;
     private String description;
     private String thumbnailUrl;
-    private String videoUrl;
-    private String size;
-    private String views;
-    private String likes;
+    private String objectName;
+    private Long views;
+    private Long likes;
 
 }

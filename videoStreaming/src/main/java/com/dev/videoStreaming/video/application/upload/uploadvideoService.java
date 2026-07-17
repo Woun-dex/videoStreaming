@@ -58,10 +58,9 @@ public class uploadvideoService {
             .title(event.getObjectName())
             .description("")
             .thumbnailUrl("")
-            .videoUrl(event.getObjectName())
-            .size("")
-            .views("0")
-            .likes("0")
+            .objectName(event.getObjectName())
+            .views(0L)
+            .likes(0L)
             .build();
         
         videoRepository.save(metadata);
