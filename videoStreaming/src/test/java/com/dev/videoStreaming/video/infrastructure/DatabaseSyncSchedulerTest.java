@@ -1,7 +1,7 @@
 package com.dev.videoStreaming.video.infrastructure;
 
 import com.dev.videoStreaming.video.domain.videoMetadata;
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class DatabaseSyncSchedulerTest {
     private RedissonClient redissonClient;
 
     @Mock
-    private videoRepository videoRepository;
+    private VideoRepository videoRepository;
 
     @Mock
     private RAtomicLong viewCountMock;

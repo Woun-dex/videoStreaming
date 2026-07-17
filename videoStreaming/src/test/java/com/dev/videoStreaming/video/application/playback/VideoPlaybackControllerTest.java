@@ -1,7 +1,7 @@
 package com.dev.videoStreaming.video.application.playback;
 
 import com.dev.videoStreaming.video.domain.videoMetadata;
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class VideoPlaybackControllerTest {
 
     @Mock
-    private videoRepository videoRepository;
+    private VideoRepository videoRepository;
 
     @InjectMocks
     private VideoPlaybackController videoPlaybackController;

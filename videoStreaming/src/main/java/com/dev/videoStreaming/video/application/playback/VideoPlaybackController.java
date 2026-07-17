@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.dev.videoStreaming.video.domain.videoMetadata;
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 
 @RestController
 @RequestMapping("/api/videos")
 public class VideoPlaybackController {
 
-    private final videoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    public VideoPlaybackController(videoRepository videoRepository) {
+    public VideoPlaybackController(VideoRepository videoRepository) {
         this.videoRepository = videoRepository;
     }
 

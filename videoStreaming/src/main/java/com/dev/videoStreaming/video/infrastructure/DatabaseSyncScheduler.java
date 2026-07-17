@@ -2,7 +2,7 @@ package com.dev.videoStreaming.video.infrastructure;
 
 import org.springframework.stereotype.Component;
 
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 import com.dev.videoStreaming.video.domain.videoMetadata;
 
 import java.util.List;
@@ -18,9 +18,9 @@ import org.redisson.api.RSet;
 public class DatabaseSyncScheduler {
 
     private final RedissonClient redissonClient ;
-    private final videoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    public DatabaseSyncScheduler(RedissonClient redissonClient, videoRepository videoRepository) {
+    public DatabaseSyncScheduler(RedissonClient redissonClient, VideoRepository videoRepository) {
         this.redissonClient = redissonClient;
         this.videoRepository = videoRepository;
     }

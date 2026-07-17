@@ -3,7 +3,7 @@ package com.dev.videoStreaming.video.application.upload;
 import com.dev.videoStreaming.video.domain.videoMetadata;
 import com.dev.videoStreaming.video.domain.videoReadyEvent;
 import com.dev.videoStreaming.video.domain.videoStatus;
-import com.dev.videoStreaming.video.port.videoRepository;
+import com.dev.videoStreaming.video.port.VideoRepository;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class uploadvideoServiceTest {
     private RabbitTemplate rabbitTemplate;
 
     @Mock
-    private videoRepository videoRepository;
+    private VideoRepository videoRepository;
 
     @InjectMocks
     private uploadvideoService service;
