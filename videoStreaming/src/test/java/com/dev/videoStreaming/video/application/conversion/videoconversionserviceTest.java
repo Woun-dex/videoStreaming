@@ -43,7 +43,7 @@ public class videoconversionserviceTest {
     void processVideo_Success_ConvertsAndUploads() throws Exception {
         // Arrange
         String objectName = "test-video.mp4";
-        videoReadyEvent event = new videoReadyEvent(objectName, videoStatus.PENDING);
+        videoReadyEvent event = new videoReadyEvent("title", "description", "thumbnail.jpg", objectName, videoStatus.PENDING);
 
         // Mock minio download
         GetObjectResponse dummyResponse = mock(GetObjectResponse.class);
@@ -98,7 +98,7 @@ public class videoconversionserviceTest {
     @Test
     void processVideo_DownloadFailure_ThrowsException() throws Exception {
         // Arrange
-        videoReadyEvent event = new videoReadyEvent("test.mp4", videoStatus.PENDING);
+        videoReadyEvent event = new videoReadyEvent("title", "description", "thumbnail.jpg", "test.mp4", videoStatus.PENDING);
         doThrow(new RuntimeException("Minio Download Failed")).when(minioClient).getObject(any(GetObjectArgs.class));
 
         // Act & Assert
@@ -114,7 +114,7 @@ public class videoconversionserviceTest {
     @Test
     void processVideo_FfmpegFailure_ThrowsException() throws Exception {
         // Arrange
-        videoReadyEvent event = new videoReadyEvent("test.mp4", videoStatus.PENDING);
+        videoReadyEvent event = new videoReadyEvent("title", "description", "thumbnail.jpg", "test.mp4", videoStatus.PENDING);
         GetObjectResponse dummyResponse = mock(GetObjectResponse.class);
         lenient().when(dummyResponse.read(any(byte[].class), anyInt(), anyInt())).thenReturn(-1);
         lenient().when(dummyResponse.read(any(byte[].class))).thenReturn(-1);

@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class videoReadyEvent {
 
+    private String title;
+    private String description;
+    private String thumbnailObjectName;
     private String objectName;
     private videoStatus status;
 

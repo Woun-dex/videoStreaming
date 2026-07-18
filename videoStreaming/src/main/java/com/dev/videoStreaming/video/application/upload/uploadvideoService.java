@@ -16,9 +16,9 @@ import com.dev.videoStreaming.video.port.VideoRepository;
 
 @Slf4j
 @Service
-public class uploadvideoService {
+public class UploadvideoService {
 
-    public uploadvideoService(MinioClient minioClient, RabbitTemplate rabbitTemplate, VideoRepository videoRepository) {
+    public UploadvideoService(MinioClient minioClient, RabbitTemplate rabbitTemplate, VideoRepository videoRepository) {
         this.minioClient = minioClient;
         this.rabbitTemplate = rabbitTemplate;
         this.videoRepository = videoRepository;
@@ -28,11 +28,14 @@ public class uploadvideoService {
     private final RabbitTemplate rabbitTemplate;
     private final VideoRepository videoRepository;
     private final String bucketName = "videos";
+    private final String bucketName2 = "thumbnails";
+    private final String baseUrl = "http://localhost:9000";
     private final String exchangeName = "video-exchange";
     private final String routingKey = "video-upload";
 
-    public void uploadVideo(MultipartFile file) {
+    public String uploadVideo(MultipartFile file , String title , String description , MultipartFile thumbnail ) {
         String objectName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+        String thumbnailObjectName = UUID.randomUUID().toString() + "-" + thumbnail.getOriginalFilename();
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -42,12 +45,22 @@ public class uploadvideoService {
                         .contentType(file.getContentType())
                         .build());
 
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                        .bucket(bucketName2)
+                        .object(thumbnailObjectName)
+                        .stream(thumbnail.getInputStream(), thumbnail.getSize(), -1)
+                        .contentType(thumbnail.getContentType())
+                        .build());
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload video to MinIO", e);
         }
 
-        videoReadyEvent message = new videoReadyEvent(objectName, videoStatus.PENDING);
+        videoReadyEvent message = new videoReadyEvent(title, description, thumbnailObjectName ,objectName, videoStatus.PENDING);
         rabbitTemplate.convertAndSend(exchangeName, routingKey, message);
+
+        return objectName;
     }
 
     @RabbitListener(queues = "video-ready")
@@ -55,9 +68,9 @@ public class uploadvideoService {
         log.info("Video ready: " + event);
         videoMetadata metadata = videoMetadata.builder()
             .videoId(UUID.randomUUID().toString())
-            .title(event.getObjectName())
-            .description("")
-            .thumbnailUrl("")
+            .title(event.getTitle())
+            .description(event.getDescription())
+            .thumbnailUrl(baseUrl + "/" + bucketName2 + "/" + event.getThumbnailObjectName())
             .objectName(event.getObjectName())
             .views(0L)
             .likes(0L)

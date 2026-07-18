@@ -35,7 +35,7 @@ public class uploadvideoServiceTest {
     private VideoRepository videoRepository;
 
     @InjectMocks
-    private uploadvideoService service;
+    private UploadvideoService service;
 
     @Test
     void uploadVideo_Success_UploadsToMinioAndSendsMessage() throws Exception {
@@ -48,11 +48,17 @@ public class uploadvideoServiceTest {
         InputStream stream = new ByteArrayInputStream("dummy data".getBytes());
         when(file.getInputStream()).thenReturn(stream);
 
+        MultipartFile thumbnail = mock(MultipartFile.class);
+        when(thumbnail.getOriginalFilename()).thenReturn("thumb.jpg");
+        when(thumbnail.getSize()).thenReturn(512L);
+        when(thumbnail.getContentType()).thenReturn("image/jpeg");
+        when(thumbnail.getInputStream()).thenReturn(new ByteArrayInputStream("thumb data".getBytes()));
+
         // Act
-        service.uploadVideo(file);
+        service.uploadVideo(file, "test title", "test description", thumbnail);
 
         // Assert
-        verify(minioClient, times(1)).putObject(any(PutObjectArgs.class));
+        verify(minioClient, times(2)).putObject(any(PutObjectArgs.class));
         
         ArgumentCaptor<videoReadyEvent> eventCaptor = ArgumentCaptor.forClass(videoReadyEvent.class);
         verify(rabbitTemplate, times(1)).convertAndSend(
@@ -78,9 +84,15 @@ public class uploadvideoServiceTest {
 
         doThrow(new RuntimeException("Minio error")).when(minioClient).putObject(any(PutObjectArgs.class));
 
+        MultipartFile thumbnail = mock(MultipartFile.class);
+        when(thumbnail.getOriginalFilename()).thenReturn("thumb.jpg");
+        lenient().when(thumbnail.getSize()).thenReturn(512L);
+        lenient().when(thumbnail.getContentType()).thenReturn("image/jpeg");
+        lenient().when(thumbnail.getInputStream()).thenReturn(new ByteArrayInputStream("thumb data".getBytes()));
+
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            service.uploadVideo(file);
+            service.uploadVideo(file, "test title", "test description", thumbnail);
         });
 
         assertTrue(exception.getMessage().contains("Failed to upload video to MinIO"));
@@ -90,7 +102,7 @@ public class uploadvideoServiceTest {
     @Test
     void videoReady_ValidEvent_SavesMetadataToDatabase() {
         // Arrange
-        videoReadyEvent event = new videoReadyEvent("generated-id-test-video.mp4", videoStatus.READY);
+        videoReadyEvent event = new videoReadyEvent("title", "description", "thumbnail.jpg", "generated-id-test-video.mp4", videoStatus.READY);
 
         // Act
         service.videoReady(event);
@@ -102,7 +114,7 @@ public class uploadvideoServiceTest {
         videoMetadata savedMetadata = metadataCaptor.getValue();
         assertNotNull(savedMetadata);
         assertNotNull(savedMetadata.getVideoId());
-        assertEquals("generated-id-test-video.mp4", savedMetadata.getTitle());
+        assertEquals("title", savedMetadata.getTitle());
         assertEquals("generated-id-test-video.mp4", savedMetadata.getObjectName());
         assertEquals(0L, savedMetadata.getViews());
         assertEquals(0L, savedMetadata.getLikes());

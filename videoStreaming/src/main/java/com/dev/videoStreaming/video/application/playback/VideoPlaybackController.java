@@ -12,10 +12,14 @@ import com.dev.videoStreaming.video.port.VideoRepository;
 public class VideoPlaybackController {
 
     private final VideoRepository videoRepository;
+    private final VideoStatsService videoStatsService;
 
-    public VideoPlaybackController(VideoRepository videoRepository) {
+    public VideoPlaybackController(VideoRepository videoRepository, VideoStatsService videoStatsService) {
         this.videoRepository = videoRepository;
+        this.videoStatsService = videoStatsService;
     }
+
+
 
     @GetMapping("/{videoId}/url")
     public String getVideoUrl(@PathVariable String videoId) {
@@ -25,6 +29,8 @@ public class VideoPlaybackController {
         // The objectName is your .m3u8 file
         String objectName = metadata.getObjectName(); 
         
+
+        videoStatsService.incrementView(videoId);
         // Return the direct MinIO URL
         return "http://localhost:9000/videos/" + objectName;
     }

@@ -1,9 +1,13 @@
 spring:
   application:
     name: videoStreaming
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/video_db
+    url: jdbc:postgresql://localhost:5433/video_db
     username: video_user
     password: video_password
   jpa:

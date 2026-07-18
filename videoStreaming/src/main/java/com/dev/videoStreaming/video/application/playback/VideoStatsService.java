@@ -22,13 +22,12 @@ public class VideoStatsService {
      public boolean toggleLike(String videoId, String userId) {
         RSet<String> likers = redissonClient.getSet("video:likers:" + videoId);
         
-        // If the user is already in the set, they are "unliking" the video
         if (likers.contains(userId)) {
             likers.remove(userId);
-            return false; // unliked
+            return false; 
         } else {
             likers.add(userId);
-            return true; // liked
+            return true; 
         }
     }
 

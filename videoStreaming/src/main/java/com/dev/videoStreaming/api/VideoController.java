@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +27,14 @@ public class VideoController {
     }
 
     @GetMapping("/search/{request}")
-    public Page<videoMetadata> searchVideo(String request , Pageable pageable){
+    public Page<videoMetadata> searchVideo(@PathVariable String request , Pageable pageable){
         return videoRepository.findByObjectNameContaining(request,pageable);
+    }
+
+    @GetMapping("/details/{videoId}")
+    public videoMetadata getVideo(@PathVariable String videoId){
+        return videoRepository.findByVideoId(videoId)
+                .orElseThrow(() -> new RuntimeException("Video not found"));
     }
 
 }
